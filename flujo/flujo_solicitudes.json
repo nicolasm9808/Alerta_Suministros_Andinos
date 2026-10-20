@@ -15,7 +15,7 @@
       "typeVersion": 2.1,
       "position": [
         0,
-        300
+        304
       ],
       "webhookId": "791e9936-ae05-5b37-b214-cd2ed6163b8b"
     },
@@ -28,8 +28,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        220,
-        300
+        224,
+        304
       ]
     },
     {
@@ -63,8 +63,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        440,
-        300
+        448,
+        304
       ]
     },
     {
@@ -80,8 +80,8 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        660,
-        520
+        672,
+        528
       ]
     },
     {
@@ -97,8 +97,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        660,
-        280
+        672,
+        288
       ],
       "onError": "continueErrorOutput"
     },
@@ -112,7 +112,7 @@
       "typeVersion": 2,
       "position": [
         880,
-        260
+        272
       ]
     },
     {
@@ -139,8 +139,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1100,
-        260
+        1104,
+        272
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -159,8 +159,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1320,
-        260
+        1328,
+        272
       ]
     },
     {
@@ -194,8 +194,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        1540,
-        260
+        1552,
+        272
       ]
     },
     {
@@ -208,7 +208,7 @@
       "typeVersion": 2,
       "position": [
         1760,
-        460
+        464
       ]
     },
     {
@@ -222,8 +222,8 @@
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
       "position": [
-        1980,
-        460
+        1984,
+        464
       ],
       "webhookId": "e5b7059e-906b-56bb-90d9-4b5b19aa30f2"
     },
@@ -251,8 +251,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2200,
-        460
+        2208,
+        464
       ],
       "credentials": {
         "httpHeaderAuth": {
@@ -271,8 +271,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2420,
-        460
+        2432,
+        464
       ]
     },
     {
@@ -307,7 +307,7 @@
       "typeVersion": 2.2,
       "position": [
         2640,
-        460
+        464
       ]
     },
     {
@@ -319,7 +319,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2860,
+        2864,
         640
       ]
     },
@@ -332,8 +332,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3080,
-        260
+        3088,
+        272
       ]
     },
     {
@@ -364,8 +364,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3300,
-        260
+        3312,
+        272
       ],
       "onError": "continueErrorOutput"
     },
@@ -401,7 +401,7 @@
       "typeVersion": 2.2,
       "position": [
         3520,
-        260
+        272
       ]
     },
     {
@@ -432,7 +432,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3740,
+        3744,
         160
       ],
       "onError": "continueErrorOutput"
@@ -446,8 +446,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3960,
-        260
+        3968,
+        272
       ],
       "onError": "continueErrorOutput"
     },
@@ -473,8 +473,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        4180,
-        260
+        4192,
+        272
       ],
       "onError": "continueErrorOutput"
     },
@@ -509,7 +509,7 @@
       "typeVersion": 2.2,
       "position": [
         4400,
-        260
+        272
       ]
     },
     {
@@ -521,7 +521,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        4620,
+        4624,
         240
       ]
     },
@@ -556,7 +556,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        4840,
+        4848,
         240
       ]
     },
@@ -574,8 +574,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        5060,
-        140
+        5072,
+        144
       ],
       "credentials": {
         "telegramApi": {
@@ -611,7 +611,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        5500,
+        5504,
         240
       ]
     },
@@ -624,8 +624,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        4620,
-        700
+        4624,
+        704
       ]
     },
     {
@@ -642,8 +642,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        4840,
-        700
+        4848,
+        704
       ],
       "credentials": {
         "telegramApi": {
@@ -666,14 +666,14 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        5060,
-        700
+        5072,
+        704
       ]
     },
     {
       "parameters": {
         "content": "## 1. Entrada\nPOST /webhook/solicitud con `cliente_email` y `mensaje`.\nSe valida antes de gastar una llamada al LLM; si falta algo responde **400**.\nLa configuración (URL de la API, modelo, chat de Telegram) sale de variables de entorno.",
-        "height": 200,
+        "height": 216,
         "width": 700,
         "color": 5
       },
@@ -682,8 +682,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -40,
-        40
+        -32,
+        -128
       ]
     },
     {
@@ -698,8 +698,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        620,
-        -20
+        704,
+        -128
       ]
     },
     {
@@ -715,14 +715,14 @@
       "typeVersion": 1,
       "position": [
         3040,
-        -20
+        -128
       ]
     },
     {
       "parameters": {
         "content": "## 4. Alertas y respuesta\nTelegram si: **queja**, **urgencia alta**, **pedido sin stock** (+ revisión manual). El mensaje dice qué condición se cumplió.\nSi Telegram falla, el flujo sigue y la respuesta lo indica en `notificacion`.\nEl webhook responde **201** con el id y la clasificación.",
         "height": 220,
-        "width": 1300,
+        "width": 980,
         "color": 3
       },
       "id": "043a6037-9485-590c-9dfb-f446a80127e4",
@@ -730,14 +730,13 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        4580,
-        -20
+        4688,
+        -128
       ]
     },
     {
       "parameters": {
         "content": "## Errores técnicos\nAPI caída o respuesta inesperada → alerta al equipo técnico y respuesta **502** con JSON claro. El webhook nunca queda sin respuesta.\nErrores no previstos → flujo **Alertas de error** (Error Trigger).",
-        "height": 160,
         "width": 900,
         "color": 2
       },
@@ -746,8 +745,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        4580,
-        860
+        4592,
+        864
       ]
     }
   ],
