@@ -117,7 +117,8 @@ Fecha de hoy: {{FECHA}} ({{DIA_SEMANA}})
    un dato. El flujo no le da al LLM ninguna herramienta, así que en el peor caso solo puede clasificar mal, no actuar.
 7. **Formato forzado en tres capas.** (a) el prompt pide solo JSON y muestra ejemplos; (b) Gemini recibe
    `responseMimeType: application/json` y un `responseSchema` con `enum`, que restringe la salida; (c) el nodo
-   **Validar respuesta** del flujo vuelve a revisar todo (JSON parseable, campos, valores permitidos, tipos). Si
+   **Validar respuesta** del flujo vuelve a revisar todo (JSON parseable, campos, valores permitidos, tipos y texto
+   sin caracteres dañados: en producción Gemini cambió a veces las tildes por números, "t1ner da3ado"). Si
    falla, se reintenta una vez explicándole al modelo el error; si vuelve a fallar, se guarda para revisión manual.
 8. **`temperature: 0` y ejemplos cortos.** Clasificar no requiere creatividad. Los tres ejemplos fijan el formato
    y el tono del resumen; son distintos a los mensajes del Anexo B para no "enseñar las respuestas" de la prueba.

@@ -51,6 +51,11 @@ intentos. En ese momento la API de Gemini respondía con 503 o tardaba de 15 a 6
 servidor y con otros modelos. Es justo el caso que el flujo está diseñado para absorber: la solicitud no se
 pierde y alguien la clasifica a mano.
 
+Otro hallazgo del servidor: de forma intermitente (1 de cada 3 a 5 llamadas ese día) Gemini devolvió el resumen
+con las letras con tilde cambiadas por números o `#` ("t1ner lleg3 da1ado"), aunque el texto que recibió estaba
+bien (verificado en los datos de la ejecución de n8n). Se agregó al nodo **Validar respuesta** una regla que
+detecta un dígito o `#` entre dos letras; esa respuesta se trata como inválida y entra el reintento.
+
 Mejora pendiente que mostró esta prueba: ante un 503 conviene esperar más de 2 s antes de reintentar (por
 ejemplo 10 s con *backoff*), o usar un segundo modelo de respaldo en el reintento.
 
