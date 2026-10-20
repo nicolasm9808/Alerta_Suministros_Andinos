@@ -1,0 +1,76 @@
+# Bonus: API + n8n con un solo comando.
+#   cp .env.example .env   # y completar las llaves
+#   docker compose up -d --build
+# API:  http://localhost:8000/docs
+# n8n:  http://localhost:5678  (webhook: POST http://localhost:5678/webhook/solicitud)
+
+x-n8n-env: &n8n-env
+  API_BASE_URL: http://api:8000
+  GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash-lite}
+  TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
+  N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
+  GENERIC_TIMEZONE: America/Bogota
+  TZ: America/Bogota
+  N8N_DIAGNOSTICS_ENABLED: "false"
+  N8N_SECURE_COOKIE: "false"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    environment:
+      DATABASE_PATH: /data/suministros.db
+    volumes:
+      - api_data:/data
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  # Contenedor de un solo uso: importa credenciales (desde .env) y flujos, y publica el
+  # flujo principal. Comparte el volumen con n8n para usar la misma llave de cifrado.
+  n8n-import:
+    image: n8nio/n8n:2.43.8
+    environment:
+      <<: *n8n-env
+      GEMINI_API_KEY: ${GEMINI_API_KEY:?Falta GEMINI_API_KEY en .env}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:?Falta TELEGRAM_BOT_TOKEN en .env}
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./flujo:/flujo:ro
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        set -e
+        node -e '
+          const fs = require("fs"), e = process.env;
+          fs.writeFileSync("/tmp/creds.json", JSON.stringify([
+            { id: "GeminiApiKeySA01", name: "Gemini API key (x-goog-api-key)", type: "httpHeaderAuth",
+              data: { name: "x-goog-api-key", value: e.GEMINI_API_KEY } },
+            { id: "TelegramBotSA0001", name: "Telegram bot Suministros Andinos", type: "telegramApi",
+              data: { accessToken: e.TELEGRAM_BOT_TOKEN, baseUrl: "https://api.telegram.org" } }
+          ]), { mode: 0o600 });'
+        n8n import:credentials --input=/tmp/creds.json
+        rm -f /tmp/creds.json
+        n8n import:workflow --input=/flujo/flujo_alertas_error.json
+        n8n import:workflow --input=/flujo/flujo_solicitudes.json
+        n8n publish:workflow --id=SolicitudesSA001
+    restart: "no"
+
+  n8n:
+    image: n8nio/n8n:2.43.8
+    environment: *n8n-env
+    volumes:
+      - n8n_data:/home/node/.n8n
+    ports:
+      - "5678:5678"
+    depends_on:
+      api:
+        condition: service_healthy
+      n8n-import:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+volumes:
+  api_data:
+  n8n_data:
