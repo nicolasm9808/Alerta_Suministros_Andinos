@@ -24,7 +24,25 @@ las registra en una base SQL a través de una API propia y avisa por Telegram cu
 | 2. API REST | [`api/`](api/) | Completo, 27 pruebas con pytest |
 | 3. Consultas SQL | [`sql/consultas.sql`](sql/consultas.sql), [resultados](sql/resultados_consultas.md) | Completo |
 | 4. Prompt y agentes | [`prompts/`](prompts/) | Completo, probado con Gemini |
-| Bonus: despliegue | [`docker-compose.yml`](docker-compose.yml), [`bonus/`](bonus/) | Completo, probado con Docker 29 |
+| Bonus: despliegue | [`docker-compose.yml`](docker-compose.yml), [`deploy/`](deploy/), [`bonus/`](bonus/) | **Desplegado en Google Cloud con HTTPS** |
+
+## Demo en línea
+
+Desplegado en una VM de Google Cloud (e2-small, Ubuntu 24.04) con Docker Compose y HTTPS automático (Caddy):
+
+| Qué | URL |
+|---|---|
+| API: documentación Swagger | <https://api.35-185-73-80.sslip.io/docs> |
+| API: ejemplo | <https://api.35-185-73-80.sslip.io/clientes?email=compras@ferreteriaeltornillo.com> |
+| Webhook del flujo | `POST https://n8n.35-185-73-80.sslip.io/webhook/solicitud` |
+
+```bash
+curl -X POST https://n8n.35-185-73-80.sslip.io/webhook/solicitud -H 'Content-Type: application/json' \
+  -d '{"cliente_email":"compras@oficinasmodernassas.com","mensaje":"Es la segunda vez que el tóner llega dañado."}'
+```
+
+Las alertas llegan al bot de Telegram `@alertas_suministros_andinos_bot` (al chat configurado). El editor de n8n no
+se expone a internet: se accede por túnel SSH (ver [`bonus/README.md`](bonus/README.md)).
 
 ## Estructura
 

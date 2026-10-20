@@ -20,8 +20,39 @@ docker compose up -d --build
 python3 flujo/probar_anexo_b.py   # webhook en http://localhost:5678/webhook/solicitud
 ```
 
-Para dejarlo accesible desde internet bastaría con un VPS con Docker y un proxy inverso con HTTPS (Caddy o
-Traefik) delante de n8n, más `WEBHOOK_URL` apuntando al dominio público.
+## Despliegue público (Google Cloud)
+
+- **Swagger:** <https://api.35-185-73-80.sslip.io/docs>
+- **Webhook:** `POST https://n8n.35-185-73-80.sslip.io/webhook/solicitud`
+
+| Pieza | Detalle |
+|---|---|
+| Servidor | VM e2-small (2 vCPU compartidas, 2 GB + 2 GB de swap), Ubuntu 24.04, `us-east1` |
+| HTTPS | [Caddy](../deploy/Caddyfile) obtiene certificados de Let's Encrypt solo; los dominios son de [sslip.io](https://sslip.io), que resuelve `api.35-185-73-80.sslip.io` a esa IP, así que no hace falta comprar dominio |
+| Puertos | Solo 22, 80 y 443 abiertos (firewall `ufw` + reglas de Google Cloud). La API (8000) y n8n (5678) escuchan solo en `127.0.0.1`: se llega a ellos únicamente a través de Caddy |
+| Editor de n8n | No se publica. Caddy solo deja pasar `/webhook/*` hacia n8n. Para administrar: `ssh -L 5678:localhost:5678 usuario@IP` y abrir `http://localhost:5678` |
+| Secretos | El `.env` se copia por SSH con permisos `600`; no pasa por GitHub |
+
+Archivos: [`deploy/docker-compose.prod.yml`](../deploy/docker-compose.prod.yml) (se suma al compose base) y
+[`deploy/desplegar.sh`](../deploy/desplegar.sh), que en un Ubuntu limpio instala Docker, crea el swap, configura el
+firewall, trae el código, copia el `.env` y levanta todo:
+
+```bash
+./deploy/desplegar.sh <IP> <usuario> [llave_ssh]            # clona el repo de GitHub
+ORIGEN=local ./deploy/desplegar.sh <IP> <usuario>           # envía el último commit local por SSH
+```
+
+### Prueba en el servidor (2026-10-20)
+
+Anexo B contra la URL pública ([`anexo_b_respuestas_servidor.json`](../flujo/evidencias/anexo_b_respuestas_servidor.json)):
+los 5 mensajes respondieron `201` y las 5 alertas llegaron a Telegram. Mensajes 1, 3, 4 y 5 bien clasificados.
+El **mensaje 2 quedó en revisión manual** porque Gemini devolvió errores `503` (modelo sobrecargado) en los dos
+intentos. En ese momento la API de Gemini respondía con 503 o tardaba de 15 a 60 s también desde fuera del
+servidor y con otros modelos. Es justo el caso que el flujo está diseñado para absorber: la solicitud no se
+pierde y alguien la clasifica a mano.
+
+Mejora pendiente que mostró esta prueba: ante un 503 conviene esperar más de 2 s antes de reintentar (por
+ejemplo 10 s con *backoff*), o usar un segundo modelo de respaldo en el reintento.
 
 ## Prueba (2026-10-20, Docker 29.9.1, Compose 5.6.0)
 
