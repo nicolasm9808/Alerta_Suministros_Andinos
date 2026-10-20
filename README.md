@@ -32,12 +32,12 @@ Desplegado en una VM de Google Cloud (e2-small, Ubuntu 24.04) con Docker Compose
 
 | Qué | URL |
 |---|---|
-| API: documentación Swagger | <https://api.35-185-73-80.sslip.io/docs> |
-| API: ejemplo | <https://api.35-185-73-80.sslip.io/clientes?email=compras@ferreteriaeltornillo.com> |
-| Webhook del flujo | `POST https://n8n.35-185-73-80.sslip.io/webhook/solicitud` |
+| API: documentación Swagger | <https://api.34-26-7-154.sslip.io/docs> |
+| API: ejemplo | <https://api.34-26-7-154.sslip.io/clientes?email=compras@ferreteriaeltornillo.com> |
+| Webhook del flujo | `POST https://n8n.34-26-7-154.sslip.io/webhook/solicitud` |
 
 ```bash
-curl -X POST https://n8n.35-185-73-80.sslip.io/webhook/solicitud -H 'Content-Type: application/json' \
+curl -X POST https://n8n.34-26-7-154.sslip.io/webhook/solicitud -H 'Content-Type: application/json' \
   -d '{"cliente_email":"compras@oficinasmodernassas.com","mensaje":"Es la segunda vez que el tóner llega dañado."}'
 ```
 
