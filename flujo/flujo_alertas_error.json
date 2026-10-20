@@ -1,0 +1,61 @@
+{
+  "id": "AlertasErrorSA01",
+  "name": "Suministros Andinos - Alertas de error",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "c22c93f6-d4fc-5abd-9bff-a12a52a963f1",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ (() => { try { return $env.TELEGRAM_CHAT_ID } catch (e) { return '' } })() }}",
+        "text": "=🛠 <b>Falló el flujo \"{{ $json.workflow.name }}\"</b>\nNodo: {{ $json.execution.lastNodeExecuted }}\nError: {{ ($json.execution.error?.message || '').slice(0, 300) }}\nEjecución: {{ $json.execution.id }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "e634c58c-3db0-55da-962d-2a2fd15c669d",
+      "name": "Avisar por Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        0
+      ],
+      "credentials": {
+        "telegramApi": {
+          "id": "TelegramBotSA0001",
+          "name": "Telegram bot Suministros Andinos"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Avisar por Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "pinData": {},
+  "tags": []
+}

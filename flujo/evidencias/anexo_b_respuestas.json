@@ -1,0 +1,218 @@
+[
+  {
+    "n": 1,
+    "entrada": {
+      "cliente_email": "compras@ferreteriaeltornillo.com",
+      "mensaje": "Buenos días, necesitamos 10 resmas de papel carta para el viernes, es urgente."
+    },
+    "http_status": 201,
+    "segundos": 2.75,
+    "respuesta": {
+      "id": 61,
+      "clasificacion": {
+        "tipo": "pedido",
+        "producto": "Resma papel carta",
+        "cantidad": 10,
+        "urgencia": "alta",
+        "resumen": "Pedido urgente de 10 resmas de papel carta para el viernes."
+      },
+      "cliente": {
+        "id": 1,
+        "nombre": "Ferretería El Tornillo"
+      },
+      "producto_catalogo": {
+        "id": 1,
+        "nombre": "Resma papel carta",
+        "stock": 340
+      },
+      "estado": "pendiente",
+      "sin_stock": false,
+      "requiere_revision": false,
+      "motivo_revision": null,
+      "intentos_llm": 1,
+      "alertas": [
+        {
+          "condicion": "urgencia_alta",
+          "detalle": "Urgencia alta"
+        }
+      ],
+      "notificacion": {
+        "requerida": true,
+        "enviada": true,
+        "error": null
+      }
+    }
+  },
+  {
+    "n": 2,
+    "entrada": {
+      "cliente_email": "compras@clinicalosandes.com",
+      "mensaje": "Hola, ¿tienen diademas con micrófono? ¿Cuánto valen y en cuánto tiempo llegan?"
+    },
+    "http_status": 201,
+    "segundos": 1.64,
+    "respuesta": {
+      "id": 62,
+      "clasificacion": {
+        "tipo": "consulta",
+        "producto": "Diadema con micrófono",
+        "cantidad": null,
+        "urgencia": "baja",
+        "resumen": "Consulta sobre disponibilidad, precio y tiempos de entrega de diademas con micrófono."
+      },
+      "cliente": {
+        "id": 5,
+        "nombre": "Clínica Los Andes"
+      },
+      "producto_catalogo": {
+        "id": 11,
+        "nombre": "Diadema con micrófono",
+        "stock": 0
+      },
+      "estado": "pendiente",
+      "sin_stock": false,
+      "requiere_revision": false,
+      "motivo_revision": null,
+      "intentos_llm": 1,
+      "alertas": [],
+      "notificacion": {
+        "requerida": false,
+        "enviada": false,
+        "error": null
+      }
+    }
+  },
+  {
+    "n": 3,
+    "entrada": {
+      "cliente_email": "compras@oficinasmodernassas.com",
+      "mensaje": "Es la segunda vez que el tóner llega dañado. Estamos muy molestos, necesitamos que nos respondan hoy mismo."
+    },
+    "http_status": 201,
+    "segundos": 2.48,
+    "respuesta": {
+      "id": 63,
+      "clasificacion": {
+        "tipo": "queja",
+        "producto": "Tóner HP 85A",
+        "cantidad": null,
+        "urgencia": "alta",
+        "resumen": "Queja por segunda vez de un tóner dañado y exige respuesta hoy mismo."
+      },
+      "cliente": {
+        "id": 3,
+        "nombre": "Oficinas Modernas SAS"
+      },
+      "producto_catalogo": {
+        "id": 2,
+        "nombre": "Tóner HP 85A",
+        "stock": 12
+      },
+      "estado": "pendiente",
+      "sin_stock": false,
+      "requiere_revision": false,
+      "motivo_revision": null,
+      "intentos_llm": 1,
+      "alertas": [
+        {
+          "condicion": "queja",
+          "detalle": "La solicitud es una queja"
+        },
+        {
+          "condicion": "urgencia_alta",
+          "detalle": "Urgencia alta"
+        }
+      ],
+      "notificacion": {
+        "requerida": true,
+        "enviada": true,
+        "error": null
+      }
+    }
+  },
+  {
+    "n": 4,
+    "entrada": {
+      "cliente_email": "compras@constructorahorizonte.com",
+      "mensaje": "Por favor despachar 6 escritorios en L para la nueva oficina de Rionegro."
+    },
+    "http_status": 201,
+    "segundos": 3.01,
+    "respuesta": {
+      "id": 64,
+      "clasificacion": {
+        "tipo": "pedido",
+        "producto": "Escritorio en L",
+        "cantidad": 6,
+        "urgencia": "media",
+        "resumen": "Pedido de 6 escritorios en L para la nueva oficina."
+      },
+      "cliente": {
+        "id": 10,
+        "nombre": "Constructora Horizonte"
+      },
+      "producto_catalogo": {
+        "id": 4,
+        "nombre": "Escritorio en L",
+        "stock": 3
+      },
+      "estado": "pendiente",
+      "sin_stock": true,
+      "requiere_revision": false,
+      "motivo_revision": null,
+      "intentos_llm": 1,
+      "alertas": [
+        {
+          "condicion": "sin_stock",
+          "detalle": "Piden 6 und. de Escritorio en L y hay 3 en stock (faltan 3)"
+        }
+      ],
+      "notificacion": {
+        "requerida": true,
+        "enviada": true,
+        "error": null
+      }
+    }
+  },
+  {
+    "n": 5,
+    "entrada": {
+      "cliente_email": "juanperez.compras@gmail.com",
+      "mensaje": "hola buenas q precio tienen los mouse inalambricos y si hacen envios"
+    },
+    "http_status": 201,
+    "segundos": 2.03,
+    "respuesta": {
+      "id": 65,
+      "clasificacion": {
+        "tipo": "consulta",
+        "producto": "Mouse inalámbrico",
+        "cantidad": null,
+        "urgencia": "baja",
+        "resumen": "Consulta el precio de los mouse inalámbricos y si realizan envíos."
+      },
+      "cliente": null,
+      "producto_catalogo": {
+        "id": 5,
+        "nombre": "Mouse inalámbrico",
+        "stock": 120
+      },
+      "estado": "pendiente",
+      "sin_stock": false,
+      "requiere_revision": true,
+      "motivo_revision": "cliente_no_registrado",
+      "intentos_llm": 1,
+      "alertas": [
+        {
+          "condicion": "revision_manual",
+          "detalle": "Revisión manual: el correo no corresponde a ningún cliente registrado"
+        }
+      ],
+      "notificacion": {
+        "requerida": true,
+        "enviada": true,
+        "error": null
+      }
+    }
+  }
+]
