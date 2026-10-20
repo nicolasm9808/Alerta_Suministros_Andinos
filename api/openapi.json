@@ -1,0 +1,1292 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Suministros Andinos - API de solicitudes",
+    "description": "Clientes, catálogo y solicitudes clasificadas por IA (prueba técnica).",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/clientes": {
+      "get": {
+        "tags": [
+          "clientes"
+        ],
+        "summary": "Buscar Por Email",
+        "operationId": "buscar_por_email_clientes_get",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 3,
+              "description": "Correo del cliente (no distingue mayúsculas)",
+              "title": "Email"
+            },
+            "description": "Correo del cliente (no distingue mayúsculas)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Cliente"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorRespuesta"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/productos": {
+      "get": {
+        "tags": [
+          "productos"
+        ],
+        "summary": "Buscar",
+        "description": "Búsqueda parcial por nombre, sin distinguir mayúsculas ni tildes.",
+        "operationId": "buscar_productos_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Texto parcial del nombre; sin q devuelve todo el catálogo",
+              "title": "Q"
+            },
+            "description": "Texto parcial del nombre; sin q devuelve todo el catálogo"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Producto"
+                  },
+                  "title": "Response Buscar Productos Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/productos/coincidencia": {
+      "get": {
+        "tags": [
+          "productos"
+        ],
+        "summary": "Mejor Coincidencia",
+        "description": "Relaciona el texto libre del cliente con el producto más parecido del catálogo.\n\nLo usa el flujo de n8n: el cliente puede escribir \"resmas de papel\" para\n\"Resma papel carta\". Devuelve 404 si ningún producto supera el umbral.",
+        "operationId": "mejor_coincidencia_productos_coincidencia_get",
+        "parameters": [
+          {
+            "name": "texto",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 2,
+              "description": "Producto como lo escribió el cliente, p. ej. \"resmas de papel\"",
+              "title": "Texto"
+            },
+            "description": "Producto como lo escribió el cliente, p. ej. \"resmas de papel\""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProductoCoincidencia"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorRespuesta"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/solicitudes": {
+      "post": {
+        "tags": [
+          "solicitudes"
+        ],
+        "summary": "Crear",
+        "description": "Crea una solicitud en estado `pendiente`.\n\nSi es un pedido y la cantidad supera el stock del producto, responde\n`sin_stock: true`; la solicitud se guarda de todas formas.",
+        "operationId": "crear_solicitudes_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SolicitudCrear"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SolicitudCreada"
+                }
+              }
+            }
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorRespuesta"
+                }
+              }
+            },
+            "description": "Unprocessable Entity"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "solicitudes"
+        ],
+        "summary": "Listar",
+        "description": "Lista solicitudes, de la más reciente a la más antigua.",
+        "operationId": "listar_solicitudes_get",
+        "parameters": [
+          {
+            "name": "tipo",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "pedido",
+                    "consulta",
+                    "queja"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Tipo"
+            }
+          },
+          {
+            "name": "estado",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "pendiente",
+                    "en_proceso",
+                    "resuelta"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Estado"
+            }
+          },
+          {
+            "name": "urgencia",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "baja",
+                    "media",
+                    "alta"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Urgencia"
+            }
+          },
+          {
+            "name": "requiere_revision",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Requiere Revision"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Limit"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Offset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginaSolicitudes"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/solicitudes/{solicitud_id}": {
+      "get": {
+        "tags": [
+          "solicitudes"
+        ],
+        "summary": "Detalle",
+        "operationId": "detalle_solicitudes__solicitud_id__get",
+        "parameters": [
+          {
+            "name": "solicitud_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Solicitud Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Solicitud"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorRespuesta"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "solicitudes"
+        ],
+        "summary": "Cambiar Estado",
+        "description": "Cambia el estado de una solicitud.\n\n* Al pasar a `resuelta` se registra la fecha de resolución.\n* Una solicitud `resuelta` no puede volver a `pendiente` (409).\n* `resuelta` → `en_proceso` se permite como reapertura y borra la fecha de resolución.",
+        "operationId": "cambiar_estado_solicitudes__solicitud_id__patch",
+        "parameters": [
+          {
+            "name": "solicitud_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Solicitud Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SolicitudActualizar"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Solicitud"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorRespuesta"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "409": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorRespuesta"
+                }
+              }
+            },
+            "description": "Conflict"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/salud": {
+      "get": {
+        "tags": [
+          "sistema"
+        ],
+        "summary": "Salud",
+        "operationId": "salud_salud_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Cliente": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "ciudad": {
+            "type": "string",
+            "title": "Ciudad"
+          },
+          "email": {
+            "type": "string",
+            "title": "Email"
+          },
+          "fecha_registro": {
+            "type": "string",
+            "title": "Fecha Registro"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre",
+          "ciudad",
+          "email",
+          "fecha_registro"
+        ],
+        "title": "Cliente"
+      },
+      "ErrorDetalle": {
+        "properties": {
+          "campo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Campo"
+          },
+          "mensaje": {
+            "type": "string",
+            "title": "Mensaje"
+          }
+        },
+        "type": "object",
+        "required": [
+          "mensaje"
+        ],
+        "title": "ErrorDetalle"
+      },
+      "ErrorRespuesta": {
+        "properties": {
+          "error": {
+            "type": "string",
+            "title": "Error"
+          },
+          "mensaje": {
+            "type": "string",
+            "title": "Mensaje"
+          },
+          "detalles": {
+            "items": {
+              "$ref": "#/components/schemas/ErrorDetalle"
+            },
+            "type": "array",
+            "title": "Detalles"
+          }
+        },
+        "type": "object",
+        "required": [
+          "error",
+          "mensaje"
+        ],
+        "title": "ErrorRespuesta"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "PaginaSolicitudes": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "limit": {
+            "type": "integer",
+            "title": "Limit"
+          },
+          "offset": {
+            "type": "integer",
+            "title": "Offset"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/Solicitud"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "total",
+          "limit",
+          "offset",
+          "items"
+        ],
+        "title": "PaginaSolicitudes"
+      },
+      "Producto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "categoria": {
+            "type": "string",
+            "title": "Categoria"
+          },
+          "precio": {
+            "type": "number",
+            "title": "Precio"
+          },
+          "stock": {
+            "type": "integer",
+            "title": "Stock"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre",
+          "categoria",
+          "precio",
+          "stock"
+        ],
+        "title": "Producto"
+      },
+      "ProductoCoincidencia": {
+        "properties": {
+          "producto": {
+            "$ref": "#/components/schemas/Producto"
+          },
+          "puntaje": {
+            "type": "number",
+            "title": "Puntaje",
+            "description": "0 a 1; 1 es coincidencia exacta de palabras"
+          },
+          "alternativas": {
+            "items": {
+              "$ref": "#/components/schemas/Producto"
+            },
+            "type": "array",
+            "title": "Alternativas",
+            "description": "otros candidatos sobre el umbral"
+          }
+        },
+        "type": "object",
+        "required": [
+          "producto",
+          "puntaje"
+        ],
+        "title": "ProductoCoincidencia"
+      },
+      "Solicitud": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "cliente_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cliente Id"
+          },
+          "cliente_nombre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cliente Nombre"
+          },
+          "email_remitente": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email Remitente"
+          },
+          "producto_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Producto Id"
+          },
+          "producto_nombre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Producto Nombre"
+          },
+          "producto_texto": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Producto Texto"
+          },
+          "tipo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "pedido",
+                  "consulta",
+                  "queja"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tipo"
+          },
+          "cantidad": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cantidad"
+          },
+          "urgencia": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "baja",
+                  "media",
+                  "alta"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Urgencia"
+          },
+          "estado": {
+            "type": "string",
+            "enum": [
+              "pendiente",
+              "en_proceso",
+              "resuelta"
+            ],
+            "title": "Estado"
+          },
+          "mensaje": {
+            "type": "string",
+            "title": "Mensaje"
+          },
+          "resumen": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resumen"
+          },
+          "requiere_revision": {
+            "type": "boolean",
+            "title": "Requiere Revision"
+          },
+          "motivo_revision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo Revision"
+          },
+          "fecha_creacion": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Fecha Creacion"
+          },
+          "fecha_resolucion": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Resolucion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "cliente_id",
+          "cliente_nombre",
+          "email_remitente",
+          "producto_id",
+          "producto_nombre",
+          "producto_texto",
+          "tipo",
+          "cantidad",
+          "urgencia",
+          "estado",
+          "mensaje",
+          "resumen",
+          "requiere_revision",
+          "motivo_revision",
+          "fecha_creacion",
+          "fecha_resolucion"
+        ],
+        "title": "Solicitud"
+      },
+      "SolicitudActualizar": {
+        "properties": {
+          "estado": {
+            "type": "string",
+            "enum": [
+              "pendiente",
+              "en_proceso",
+              "resuelta"
+            ],
+            "title": "Estado"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "estado"
+        ],
+        "title": "SolicitudActualizar"
+      },
+      "SolicitudCreada": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "cliente_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cliente Id"
+          },
+          "cliente_nombre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cliente Nombre"
+          },
+          "email_remitente": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email Remitente"
+          },
+          "producto_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Producto Id"
+          },
+          "producto_nombre": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Producto Nombre"
+          },
+          "producto_texto": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Producto Texto"
+          },
+          "tipo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "pedido",
+                  "consulta",
+                  "queja"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tipo"
+          },
+          "cantidad": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cantidad"
+          },
+          "urgencia": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "baja",
+                  "media",
+                  "alta"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Urgencia"
+          },
+          "estado": {
+            "type": "string",
+            "enum": [
+              "pendiente",
+              "en_proceso",
+              "resuelta"
+            ],
+            "title": "Estado"
+          },
+          "mensaje": {
+            "type": "string",
+            "title": "Mensaje"
+          },
+          "resumen": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resumen"
+          },
+          "requiere_revision": {
+            "type": "boolean",
+            "title": "Requiere Revision"
+          },
+          "motivo_revision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo Revision"
+          },
+          "fecha_creacion": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Fecha Creacion"
+          },
+          "fecha_resolucion": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Resolucion"
+          },
+          "sin_stock": {
+            "type": "boolean",
+            "title": "Sin Stock",
+            "description": "true si es un pedido y la cantidad supera el stock del producto"
+          },
+          "stock_disponible": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stock Disponible"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "cliente_id",
+          "cliente_nombre",
+          "email_remitente",
+          "producto_id",
+          "producto_nombre",
+          "producto_texto",
+          "tipo",
+          "cantidad",
+          "urgencia",
+          "estado",
+          "mensaje",
+          "resumen",
+          "requiere_revision",
+          "motivo_revision",
+          "fecha_creacion",
+          "fecha_resolucion",
+          "sin_stock"
+        ],
+        "title": "SolicitudCreada"
+      },
+      "SolicitudCrear": {
+        "properties": {
+          "cliente_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cliente Id",
+            "description": "Obligatorio salvo que la solicitud requiera revisión"
+          },
+          "email_remitente": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "email"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email Remitente"
+          },
+          "producto_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Producto Id"
+          },
+          "producto_texto": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Producto Texto"
+          },
+          "tipo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "pedido",
+                  "consulta",
+                  "queja"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tipo",
+            "description": "Obligatorio salvo que la solicitud requiera revisión"
+          },
+          "cantidad": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cantidad"
+          },
+          "urgencia": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "baja",
+                  "media",
+                  "alta"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Urgencia",
+            "description": "Obligatorio salvo que la solicitud requiera revisión"
+          },
+          "mensaje": {
+            "type": "string",
+            "maxLength": 5000,
+            "minLength": 1,
+            "title": "Mensaje"
+          },
+          "resumen": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 300
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resumen"
+          },
+          "requiere_revision": {
+            "type": "boolean",
+            "title": "Requiere Revision",
+            "default": false
+          },
+          "motivo_revision": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 60
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo Revision"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "mensaje"
+        ],
+        "title": "SolicitudCrear",
+        "examples": [
+          {
+            "cantidad": 10,
+            "cliente_id": 1,
+            "email_remitente": "compras@ferreteriaeltornillo.com",
+            "mensaje": "Buenos días, necesitamos 10 resmas de papel carta para el viernes, es urgente.",
+            "producto_id": 1,
+            "producto_texto": "resmas de papel carta",
+            "resumen": "Pedido urgente de 10 resmas de papel carta para el viernes",
+            "tipo": "pedido",
+            "urgencia": "alta"
+          }
+        ]
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
