@@ -59,7 +59,10 @@ echo "==> Copiando .env (con los dominios públicos)"
   | "${SSH[@]}" "umask 077 && cat > $DESTINO/.env"
 
 echo "==> Levantando contenedores"
-"${SSH[@]}" "cd $DESTINO && $SUDO docker compose -f docker-compose.yml -f deploy/docker-compose.prod.yml up -d --build"
+COMPOSE="$SUDO docker compose -f docker-compose.yml -f deploy/docker-compose.prod.yml"
+# n8n-import vuelve a cargar el flujo, pero un n8n que ya estaba corriendo sigue usando la versión
+# que tiene en memoria: se reinicia para que tome la recién publicada.
+"${SSH[@]}" "cd $DESTINO && $COMPOSE up -d --build && $COMPOSE restart n8n"
 
 echo
 echo "Listo:"

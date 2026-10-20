@@ -6,7 +6,7 @@
       "mensaje": "Buenos días, necesitamos 10 resmas de papel carta para el viernes, es urgente."
     },
     "http_status": 201,
-    "segundos": 21.88,
+    "segundos": 8.03,
     "respuesta": {
       "id": 61,
       "clasificacion": {
@@ -29,7 +29,7 @@
       "sin_stock": false,
       "requiere_revision": false,
       "motivo_revision": null,
-      "intentos_llm": 2,
+      "intentos_llm": 1,
       "alertas": [
         {
           "condicion": "urgencia_alta",
@@ -50,29 +50,34 @@
       "mensaje": "Hola, ¿tienen diademas con micrófono? ¿Cuánto valen y en cuánto tiempo llegan?"
     },
     "http_status": 201,
-    "segundos": 5.22,
+    "segundos": 17.64,
     "respuesta": {
       "id": 62,
-      "clasificacion": null,
+      "clasificacion": {
+        "tipo": "consulta",
+        "producto": "Diadema con micrófono",
+        "cantidad": null,
+        "urgencia": "baja",
+        "resumen": "Consulta sobre disponibilidad, precio y tiempos de entrega de diademas con micrófono."
+      },
       "cliente": {
         "id": 5,
         "nombre": "Clínica Los Andes"
       },
-      "producto_catalogo": null,
+      "producto_catalogo": {
+        "id": 11,
+        "nombre": "Diadema con micrófono",
+        "stock": 0
+      },
       "estado": "pendiente",
       "sin_stock": false,
-      "requiere_revision": true,
-      "motivo_revision": "llm_invalido",
-      "intentos_llm": 2,
-      "alertas": [
-        {
-          "condicion": "revision_manual",
-          "detalle": "Revisión manual: el LLM no devolvió una clasificación válida en 2 intentos"
-        }
-      ],
+      "requiere_revision": false,
+      "motivo_revision": null,
+      "intentos_llm": 1,
+      "alertas": [],
       "notificacion": {
-        "requerida": true,
-        "enviada": true,
+        "requerida": false,
+        "enviada": false,
         "error": null
       }
     }
@@ -84,7 +89,7 @@
       "mensaje": "Es la segunda vez que el tóner llega dañado. Estamos muy molestos, necesitamos que nos respondan hoy mismo."
     },
     "http_status": 201,
-    "segundos": 18.03,
+    "segundos": 23.65,
     "respuesta": {
       "id": 63,
       "clasificacion": {
@@ -92,7 +97,7 @@
         "producto": "Tóner HP 85A",
         "cantidad": null,
         "urgencia": "alta",
-        "resumen": "Queja por segunda vez de tóner dañado; exigen respuesta hoy mismo."
+        "resumen": "Queja reiterada porque el tóner llegó dañado; exigen respuesta hoy mismo."
       },
       "cliente": {
         "id": 3,
@@ -107,7 +112,7 @@
       "sin_stock": false,
       "requiere_revision": false,
       "motivo_revision": null,
-      "intentos_llm": 1,
+      "intentos_llm": 2,
       "alertas": [
         {
           "condicion": "queja",
@@ -132,7 +137,7 @@
       "mensaje": "Por favor despachar 6 escritorios en L para la nueva oficina de Rionegro."
     },
     "http_status": 201,
-    "segundos": 23.78,
+    "segundos": 7.26,
     "respuesta": {
       "id": 64,
       "clasificacion": {
@@ -140,7 +145,7 @@
         "producto": "Escritorio en L",
         "cantidad": 6,
         "urgencia": "media",
-        "resumen": "Pedido de 6 escritorios en L para la nueva oficina de Rionegro."
+        "resumen": "Pedido de 6 escritorios en L para la oficina de Rionegro."
       },
       "cliente": {
         "id": 10,
@@ -176,7 +181,7 @@
       "mensaje": "hola buenas q precio tienen los mouse inalambricos y si hacen envios"
     },
     "http_status": 201,
-    "segundos": 14.87,
+    "segundos": 18.03,
     "respuesta": {
       "id": 65,
       "clasificacion": {
@@ -184,7 +189,7 @@
         "producto": "Mouse inalámbrico",
         "cantidad": null,
         "urgencia": "baja",
-        "resumen": "Consulta el precio de los mouses inalámbricos y si realizan envíos."
+        "resumen": "Consulta el precio de los mouse inalámbricos y si realizan envíos."
       },
       "cliente": null,
       "producto_catalogo": {

@@ -44,12 +44,16 @@ ORIGEN=local ./deploy/desplegar.sh <IP> <usuario>           # envía el último 
 
 ### Prueba en el servidor (2026-10-20)
 
-Anexo B contra la URL pública ([`anexo_b_respuestas_servidor.json`](../flujo/evidencias/anexo_b_respuestas_servidor.json)):
-los 5 mensajes respondieron `201` y las 5 alertas llegaron a Telegram. Mensajes 1, 3, 4 y 5 bien clasificados.
-El **mensaje 2 quedó en revisión manual** porque Gemini devolvió errores `503` (modelo sobrecargado) en los dos
-intentos. En ese momento la API de Gemini respondía con 503 o tardaba de 15 a 60 s también desde fuera del
-servidor y con otros modelos. Es justo el caso que el flujo está diseñado para absorber: la solicitud no se
-pierde y alguien la clasifica a mano.
+Anexo B contra la URL pública, con la versión final del flujo
+([`anexo_b_respuestas_servidor.json`](../flujo/evidencias/anexo_b_respuestas_servidor.json)): los 5 mensajes
+respondieron `201`, los 5 quedaron **bien clasificados** (mismo resultado que en local) y llegaron las 4 alertas
+esperadas a Telegram. El mensaje 3 necesitó el reintento. Tiempos de 7 a 24 s, porque ese día Gemini estaba
+lento.
+
+Antes, en la primera corrida en el servidor, el **mensaje 2 quedó en revisión manual** porque Gemini devolvió
+errores `503` (modelo sobrecargado) en los dos intentos. En ese momento la API de Gemini respondía con 503 o
+tardaba de 15 a 60 s también desde fuera del servidor y con otros modelos. Es justo el caso que el flujo está
+diseñado para absorber: la solicitud no se pierde y alguien la clasifica a mano.
 
 Otro hallazgo del servidor: de forma intermitente (1 de cada 3 a 5 llamadas ese día) Gemini devolvió el resumen
 con las letras con tilde cambiadas por números o `#` ("t1ner lleg3 da1ado"), aunque el texto que recibió estaba
