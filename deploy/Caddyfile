@@ -1,0 +1,20 @@
+# Proxy inverso con HTTPS automático (Let's Encrypt).
+# Los dominios vienen de variables de entorno; con sslip.io no hace falta comprar un dominio:
+# api.203-0-113-10.sslip.io apunta a la IP 203.0.113.10.
+
+{$DOMINIO_API} {
+	encode gzip
+	reverse_proxy api:8000
+}
+
+{$DOMINIO_N8N} {
+	# Solo el webhook es público. El editor de n8n se abre por túnel SSH
+	# (ssh -L 5678:localhost:5678 ...) para no exponer la interfaz de administración.
+	@webhook path /webhook/* /webhook-test/*
+	handle @webhook {
+		reverse_proxy n8n:5678
+	}
+	handle {
+		respond "Solo el webhook de n8n es público: POST /webhook/solicitud" 403
+	}
+}

@@ -1,0 +1,38 @@
+# Ajustes para el servidor público. Se usa junto con el compose base:
+#   docker compose -f docker-compose.yml -f deploy/docker-compose.prod.yml up -d --build
+# Requiere DOMINIO_API y DOMINIO_N8N en .env (los escribe deploy/desplegar.sh).
+
+services:
+  api:
+    # Solo Caddy llega a la API desde afuera; en el host queda en 127.0.0.1.
+    ports: !override
+      - "127.0.0.1:8000:8000"
+
+  n8n:
+    # El editor solo se abre por túnel SSH; el webhook sale por Caddy.
+    ports: !override
+      - "127.0.0.1:5678:5678"
+    environment:
+      WEBHOOK_URL: https://${DOMINIO_N8N}/
+      N8N_PROXY_HOPS: "1"
+
+  caddy:
+    image: caddy:2.10.2
+    restart: unless-stopped
+    environment:
+      DOMINIO_API: ${DOMINIO_API:?Falta DOMINIO_API en .env}
+      DOMINIO_N8N: ${DOMINIO_N8N:?Falta DOMINIO_N8N en .env}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+      - n8n
+
+volumes:
+  caddy_data:
+  caddy_config:
