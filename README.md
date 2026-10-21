@@ -167,6 +167,9 @@ python3 prompts/probar_chatbot.py     # usa GEMINI_API_KEY de .env; sin dependen
 docker compose up -d --build          # API en :8000, n8n en :5678 con el flujo ya importado y publicado
 ```
 
+Para desplegarlo en un servidor con HTTPS (como la demo en línea): `./deploy/desplegar.sh <IP> <usuario>`. Detalles
+en [`bonus/README.md`](bonus/README.md).
+
 ## Herramientas elegidas y por qué
 
 | Herramienta | Por qué |
@@ -259,13 +262,16 @@ SQLite no tiene `ALTER COLUMN`, así que la migración reconstruye la tabla cons
 
 ## Evidencias
 
-- Ejercicio 1: [`flujo/evidencias/`](flujo/evidencias/README.md). Contiene una tabla con el resultado real de los
-  5 mensajes del Anexo B (los cinco bien clasificados al primer intento y 4 alertas enviadas a Telegram), las
-  respuestas completas del webhook y las capturas de n8n y de Telegram.
+- Ejercicio 1: [`flujo/evidencias/`](flujo/evidencias/README.md). Contiene **25 capturas tomadas en el servidor
+  público** (ejecuciones en n8n y alertas en Telegram) de los 5 mensajes del Anexo B, la entrada inválida (400) y
+  la API caída (502 con alerta técnica), más las respuestas completas del webhook en local y en el servidor.
+- En el servidor aparecieron **fallas reales de Gemini** que el flujo absorbió sin perder solicitudes: errores 503,
+  timeouts de más de 30 s y un JSON con las tildes mal codificadas (`\u0033` en vez de `\u00f3`). Las capturas
+  muestran el reintento resolviéndolas; el detalle está en [`bonus/README.md`](bonus/README.md).
 - Ejercicio 4: [`prompts/pruebas_chatbot.md`](prompts/pruebas_chatbot.md).
-- Además del Anexo B, se probaron los caminos de error con un servidor que simula Gemini y Telegram: JSON inválido
-  que se corrige en el reintento, JSON inválido dos veces (revisión manual), HTTP 429 en el primer intento,
-  entrada inválida (400), Telegram caído (la solicitud se registra igual) y API caída (502 y alerta técnica).
+- Durante el desarrollo se probaron además, con un servidor que simula Gemini y Telegram: JSON inválido que se
+  corrige en el reintento, JSON inválido dos veces (revisión manual), HTTP 429 y Telegram caído (la solicitud se
+  registra igual).
 
 ## Pendiente y mejoras con más tiempo
 
@@ -277,7 +283,10 @@ SQLite no tiene `ALTER COLUMN`, así que la migración reconstruye la tabla cons
 - **Varios productos por solicitud**: tabla `solicitud_items` para pedidos con varias líneas.
 - **Deduplicación**: los datos tienen solicitudes repetidas (ver comentarios en `consultas.sql`). Un hash de
   correo + mensaje en una ventana de tiempo evitaría registrarlas dos veces.
-- **Despliegue público**: el `docker-compose.yml` corre local. Para un servidor faltaría un proxy con HTTPS (Caddy
-  o Traefik), `WEBHOOK_URL` con el dominio y backups del volumen de SQLite.
+- **Operación del servidor**: el despliegue en Google Cloud funciona (ver "Demo en línea"), pero le faltan backups
+  programados del volumen de SQLite (por ejemplo, *snapshots* del disco), monitoreo externo de `/salud` y un
+  dominio propio en lugar de sslip.io.
+- **Reintento más robusto**: hoy espera 2 s fijos. Ante un 429 o 503 convendría esperar más (*backoff*) y usar un
+  modelo de respaldo en el segundo intento; en el servidor se vieron 503 y timeouts reales de Gemini.
 - **Chatbot con herramientas** en vez de catálogo en el contexto (ver `prompts/respuestas.md`, pregunta 3), y el
   agente del bonus con LangGraph.
